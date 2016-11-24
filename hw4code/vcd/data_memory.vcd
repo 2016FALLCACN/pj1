@@ -1,0 +1,41 @@
+$date
+	Thu Nov 24 19:34:20 2016
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	100ps
+$end
+$scope module Data_Memory_tb $end
+$var wire 32 ! data_o [31:0] $end
+$var reg 1 " MemRead_i $end
+$var reg 1 # MemWrite_i $end
+$var reg 32 $ addr_i [31:0] $end
+$var reg 32 % data_i [31:0] $end
+$scope module data_0 $end
+$var wire 1 & MemRead_i $end
+$var wire 1 ' MemWrite_i $end
+$var wire 32 ( addr_i [31:0] $end
+$var wire 32 ) data_i [31:0] $end
+$var reg 32 * data_o [31:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+bx *
+b1010 )
+b0 (
+1'
+0&
+b1010 %
+b0 $
+1#
+0"
+bx !
+$end
+#10000
+0#
+0'
+#20000
