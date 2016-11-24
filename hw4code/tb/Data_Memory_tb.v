@@ -20,12 +20,12 @@ end
 
 initial begin
 	addr_i = 32'd0; 
-	data_i = 32'd10; 
+	data_i = 32'd1024; 
 	MemWrite_i = 1;
 	MemRead_i = 0;
 	# 100 addr_i = 32'd0; 
 	MemWrite_i = 0;
-	MemRead_i = 0;
+	MemRead_i = 1;
 	# 100 ;
 	$finish;
 end
