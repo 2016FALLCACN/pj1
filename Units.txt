@@ -1,6 +1,5 @@
 # Done
 
-PC
 Adder1 - PC+4
 IM
 Regs
@@ -9,6 +8,7 @@ ALU_Control
 
 # Need to Modify
 
+PC
 Control
 
 # Need to Create
