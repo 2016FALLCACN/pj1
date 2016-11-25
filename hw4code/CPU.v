@@ -20,6 +20,7 @@ wire				wire_ctrl_mtr; // from Control to mux32 WBSrc
 wire				wire_ctrl_mw; // from Control to Data_Memory
 wire				wire_ctrl_mr; // from Control to Data_Memory
 wire				wire_ctrl_br; // from Control to AND_Branch
+wire				wire_ctrl_j; // from Control to MUX_Jump
 wire				wire_zero; // from EQ to AND_Branch
 wire				wire_isbr; // from AND_Branch to MUX_Branch
 wire	[1:0]		wire_alu_op; // from Control
@@ -31,9 +32,11 @@ wire	[31:0]		wire_sign_ext; // from Sign_Extend
 wire	[31:0]		wire_mux32_alusrc; // from MUX32 alusrc
 wire	[31:0]		wire_mux32_wbsrc; // from MUX32 wbsrc
 wire    [31:0]		wire_mux32_br; // from MUX_Branch
+wire    [31:0]		wire_mux32_j; // from MUX_Jump
 wire	[31:0]		wire_alu_out; // from ALU
 wire    [31:0]		wire_mem_out; // from Data_Memory
-wire    [31:0]		wire_sll_br; // from branch_sll
+wire    [31:0]		wire_sll_br; // from ssl_branch
+wire    [31:0]		wire_sll_j; // from ssl_j
 wire    [31:0]		wire_add_br; // from Add_Branch
 
 
@@ -46,7 +49,8 @@ Control Control(
     .MemWrite_o (wire_ctrl_mw),
     .MemRead_o  (wire_ctrl_mr),
     .MemtoReg_o (wire_ctrl_mtr),
-    .Branch_o   (wire_ctrl_br)
+    .Branch_o   (wire_ctrl_br),
+    .Jump_o	(wire_ctrl_j)
 );
 
 AND AND_Branch(
@@ -68,17 +72,30 @@ Adder Add_Branch(
 );
 
 MUX32 MUX_Branch(
-    .data1_i    (wire_pc_ret), // from Add_branch
-    .data2_i    (wire_add_br), // from PC
-    .select_i   (wire_isbr), // from AND_Branch
+    .data1_i    (wire_pc_ret), // from PC + 4
+    .data2_i    (wire_add_br), // from Add_branch
+    .select_i   (wire_isbr), 
     .data_o     (wire_mux32_br)
+);
+
+Sll Sll_Jump(
+	.data_i(wire_inst),
+	.lshift(5'd2),
+	.data_o(wire_sll_j)
+);
+
+MUX32 MUX_Jump(
+    .data1_i    (wire_mux32_br), // from MUX_Branch
+    .data2_i    ({wire_mux32_br[31:28], wire_sll_j[27:0]}), // from MUX_Branch and Sll_Jump
+    .select_i   (wire_ctrl_j),
+    .data_o     (wire_mux32_j)
 );
 
 PC PC(
     .clk_i      (clk_i),
     .rst_i      (rst_i),
     .start_i    (start_i),
-    .pc_i       (wire_mux32_br),
+    .pc_i       (wire_mux32_j),
     .pc_o       (wire_pc)
 );
 
