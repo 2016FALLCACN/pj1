@@ -23,9 +23,6 @@ initial begin
         CPU.Instruction_Memory.memory[i] = 32'b0;
     end
     
-    for (i = 0; i < 32; i = i + 1) begin
- 	CPU.Data_Memory.memory[i] = 8'd0;
-    end
         
     // initialize Register File
     for(i=0; i<32; i=i+1) begin
@@ -38,9 +35,6 @@ initial begin
     // Open output file
     outfile = $fopen("output.txt") | 1;
     
-    // Set Input n into data memory at 0x00
-    CPU.Data_Memory.memory[0] = 8'h5;
-
     Clk = 0;
     Reset = 0;
     Start = 0;
