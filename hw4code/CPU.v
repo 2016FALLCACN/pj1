@@ -19,6 +19,9 @@ wire				wire_alu_src; // from Control
 wire				wire_ctrl_mtr; // from Control to mux32 WBSrc
 wire				wire_ctrl_mw; // from Control to Data_Memory
 wire				wire_ctrl_mr; // from Control to Data_Memory
+wire				wire_ctrl_br; // from Control to AND_Branch
+wire				wire_zero; // from EQ to AND_Branch
+wire				wire_isbr; // from AND_Branch to MUX_Branch
 wire	[1:0]		wire_alu_op; // from Control
 wire	[2:0]		wire_alu_ctrl; // from ALU_Control
 wire	[4:0]		wire_wr_reg; // from MUX5
@@ -27,8 +30,12 @@ wire	[31:0]		wire_data2; // from Registers
 wire	[31:0]		wire_sign_ext; // from Sign_Extend
 wire	[31:0]		wire_mux32_alusrc; // from MUX32 alusrc
 wire	[31:0]		wire_mux32_wbsrc; // from MUX32 wbsrc
+wire    [31:0]		wire_mux32_br; // from MUX_Branch
 wire	[31:0]		wire_alu_out; // from ALU
 wire    [31:0]		wire_mem_out; // from Data_Memory
+wire    [31:0]		wire_sll_br; // from branch_sll
+wire    [31:0]		wire_add_br; // from Add_Branch
+
 
 Control Control(
     .Op_i       (wire_inst[31:26]),
@@ -37,9 +44,16 @@ Control Control(
     .ALUSrc_o   (wire_alu_src),
     .RegWrite_o (wire_reg_wr),
     .MemWrite_o (wire_ctrl_mw),
-    .MemRead_o (wire_ctrl_mr),
-    .MemtoReg_o (wire_ctrl_mtr)
+    .MemRead_o  (wire_ctrl_mr),
+    .MemtoReg_o (wire_ctrl_mtr),
+    .Branch_o   (wire_ctrl_br)
 );
+
+AND AND_Branch(
+	.data1_i(wire_ctrl_br),
+	.data2_i(wire_zero),
+	.and_o(wire_isbr)
+); 
 
 Adder Add_PC(
     .data1_i   (wire_pc),
@@ -47,11 +61,24 @@ Adder Add_PC(
     .data_o     (wire_pc_ret)
 );
 
+Adder Add_Branch(
+    .data1_i   (wire_sll_br),
+    .data2_i   (wire_pc_ret),
+    .data_o     (wire_add_br)
+);
+
+MUX32 MUX_Branch(
+    .data1_i    (wire_pc_ret), // from Add_branch
+    .data2_i    (wire_add_br), // from PC
+    .select_i   (wire_isbr), // from AND_Branch
+    .data_o     (wire_mux32_br)
+);
+
 PC PC(
     .clk_i      (clk_i),
     .rst_i      (rst_i),
     .start_i    (start_i),
-    .pc_i       (wire_pc_ret),
+    .pc_i       (wire_mux32_br),
     .pc_o       (wire_pc)
 );
 
@@ -78,6 +105,12 @@ MUX5 MUX_RegDst(
     .data_o     (wire_wr_reg)
 );
 
+EQ EQ(
+	.data1_i(wire_data1), // from Registers.RSdata_o
+	.data2_i(wire_data2), // from Registers.RTdata_o
+	.eq_o(wire_zero)
+);
+
 MUX32 MUX_ALUSrc(
     .data1_i    (wire_data2), // from Registers
     .data2_i    (wire_sign_ext), // from Sign_Extend
@@ -95,6 +128,12 @@ MUX32 MUX_WBSrc(
 Sign_Extend Sign_Extend(
     .data_i     (wire_inst[15:0]),
     .data_o     (wire_sign_ext)
+);
+
+Sll Sll_Branch(
+	.data_i(wire_sign_ext),
+	.lshift(5'd2),
+	.data_o(wire_sll_br)
 );
 
 ALU ALU(

@@ -1,5 +1,5 @@
 $date
-	Thu Nov 24 19:34:20 2016
+	Thu Nov 24 20:36:58 2016
 $end
 $version
 	Icarus Verilog
@@ -25,17 +25,21 @@ $enddefinitions $end
 #0
 $dumpvars
 bx *
-b1010 )
+b10000000000 )
 b0 (
 1'
 0&
-b1010 %
+b10000000000 %
 b0 $
 1#
 0"
 bx !
 $end
 #10000
+b10000000000 *
+b10000000000 !
+1"
+1&
 0#
 0'
 #20000
