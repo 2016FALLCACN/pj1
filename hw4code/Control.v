@@ -115,6 +115,7 @@ always@(*) begin
    	Jump_o = 0;
     end
 
+    $display("Op_i = %b, MemtoReg_o = %b\n", Op_i, MemtoReg_o);
 end
 
 endmodule
