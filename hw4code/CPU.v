@@ -54,6 +54,17 @@ wire	[4:0]		wire_exmem_wr_reg;
 wire	[31:0]		wire_exmem_alu_out;
 wire	[31:0]		wire_exmem_data2;
 
+wire	[1:0]		wire_idex_wb;
+wire	[1:0]		wire_idex_m;
+wire			wire_idex_ctrl_alusrc;
+wire	[1:0] 		wire_idex_ctrl_aluop;
+wire			wire_idex_ctrl_rd;
+wire	[31:0]		wire_idex_data1;
+wire	[31:0]		wire_idex_data2;
+wire	[31:0]		wire_idex_signext;
+wire	[4:0]		wire_idex_rsaddr;
+wire	[4:0]		wire_idex_rtaddr;
+wire	[4:0]		wire_idex_rdaddr;
 
 AND AND_Branch(
 	.data1_i(wire_ctrl_br),
@@ -157,22 +168,48 @@ Sign_Extend Sign_Extend(
     .data_o     (wire_sign_ext)
 );
 
+IDEX IDEX(
+	.clk_i(clk_i),
+	.WB_i({wire_ctrl_mtr, wire_reg_wr}),
+	.M_i({wire_ctrl_mw, wire_ctrl_mr}),
+	.EX_i({wire_reg_dst, wire_alu_op, wire_alu_src}),
+	.PC_i(),
+	.RegData1_i(wire_data1),
+	.RegData2_i(wire_data2),
+	.SignExt_i(wire_sign_ext),
+	.RegAddrRs_i(wire_ifid_inst[25:21]),
+	.RegAddrRt_i(wire_ifid_inst[20:16]),
+	.RegAddrRd_i(wire_ifid_inst[15:11]),
+	.WB_o(wire_idex_wb),
+	.M_o(wire_idex_m),
+	.ALUSrc_o(wire_idex_ctrl_alusrc),
+	.ALUOp_o(wire_idex_ctrl_aluop),
+	.RegDst_o(wire_idex_ctrl_rd),
+	.PC_o(),
+	.RegData1_o(wire_idex_data1),
+	.RegData2_o(wire_idex_data2),
+	.SignExt_o(wire_idex_signext),
+	.RegAddrRs_o(wire_idex_rsaddr),
+	.RegAddrRt_o(wire_idex_rtaddr),
+	.RegAddrRd_o(wire_idex_rdaddr)
+);
+
 MUX32 MUX_ALUSrc(
-    .data1_i    (wire_data2), // from Registers
-    .data2_i    (wire_sign_ext), // from Sign_Extend
-    .select_i   (wire_alu_src), // from Control_ALUSrc
+    .data1_i    (wire_idex_data2), // from Registers
+    .data2_i    (wire_idex_signext), // from Sign_Extend
+    .select_i   (wire_idex_ctrl_alusrc), // from Control_ALUSrc
     .data_o     (wire_mux32_alusrc)
 );
 
 MUX5 MUX_RegDst(
-    .data1_i    (wire_ifid_inst[20:16]), // rt
-    .data2_i    (wire_ifid_inst[15:11]), // rd
-    .select_i   (wire_reg_dst), // from Control_RegDst
+    .data1_i    (wire_idex_rtaddr), // rt
+    .data2_i    (wire_idex_rdaddr), // rd
+    .select_i   (wire_idex_ctrl_rd), // from Control_RegDst
     .data_o     (wire_wr_reg)
 );
 
 ALU ALU(
-    .data1_i    (wire_data1),
+    .data1_i    (wire_idex_data1),
     .data2_i    (wire_mux32_alusrc),
     .ALUCtrl_i  (wire_alu_ctrl),
     .data_o     (wire_alu_out),
@@ -180,15 +217,15 @@ ALU ALU(
 );
 
 ALU_Control ALU_Control(
-    .funct_i    (wire_ifid_inst[5:0]),
-    .ALUOp_i    (wire_alu_op),
+    .funct_i    (wire_idex_signext[5:0]),
+    .ALUOp_i    (wire_idex_ctrl_aluop),
     .ALUCtrl_o  (wire_alu_ctrl)
 );
 
 EXMEM EXMEM(
 	.clk_i(clk_i),
-	.WB_i({wire_ctrl_mtr, wire_reg_wr}),
-	.M_i({wire_ctrl_mw, wire_ctrl_mr}),
+	.WB_i(wire_idex_wb),
+	.M_i(wire_idex_m),
 	.RegAddr_i(wire_wr_reg),
 	.RegData_i(wire_alu_out),
 	.MemData_i(wire_data2),
