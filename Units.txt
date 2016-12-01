@@ -13,27 +13,27 @@ Control
 
 # Need to Create
 
-MUX1 - Branch
-MUX2 - Jump
-MUX3 - RegDst
-MUX4 - ALUSrc
-MUX5 - WBSrc
+vMUX1 - Branch
+vMUX2 - Jump
+vMUX3 - RegDst
+vMUX4 - ALUSrc
+vMUX5 - WBSrc
 MUX6 - Data1Fwd
 MUX7 - Data2Fwd
 MUX8 - HzdDetect
-AND - Branch
+vAND - Branch 
 OR - Flush(Branch/Jump)
-SL2a - Branch
-SL2b - Jump
-Adder2 - Branch
+vSL2a - Branch
+vSL2b - Jump
+vAdder2 - Branch
 HDU - Hzd Detect Unit
-EQ - Branch
+vEQ - Branch
 FU - Forwarding Unit
 
 # Latches
 
-IF_ID
-ID_EX
-EX_MEM
-MEM_WB
-DM - Data Memory
+vIF_ID
+vID_EX
+vEX_MEM
+vMEM_WB
+vDM - Data Memory

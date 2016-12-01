@@ -66,6 +66,11 @@ wire	[4:0]		wire_idex_rsaddr;
 wire	[4:0]		wire_idex_rtaddr;
 wire	[4:0]		wire_idex_rdaddr;
 
+wire	[1:0]		wire_fw_sel1;
+wire	[1:0]		wire_fw_sel2;
+wire	[31:0]		wire_fw_out1;
+wire	[31:0]		wire_fw_out2;
+
 AND AND_Branch(
 	.data1_i(wire_ctrl_br),
 	.data2_i(wire_zero),
@@ -194,8 +199,24 @@ IDEX IDEX(
 	.RegAddrRd_o(wire_idex_rdaddr)
 );
 
+MUX32_3	MUX_FW1(
+	.data1_i	(wire_idex_data1),
+	.data2_i	(wire_mux32_wbsrc),
+	.data3_i	(wire_exmem_alu_out),
+	.select_i	(wire_fw_sel1),
+	.data_o		(wire_fw_out1)
+);
+
+MUX32_3	MUX_FW2(
+	.data1_i	(wire_idex_data2),
+	.data2_i	(wire_mux32_wbsrc),
+	.data3_i	(wire_exmem_alu_out),
+	.select_i	(wire_fw_sel2),
+	.data_o		(wire_fw_out2)
+);
+
 MUX32 MUX_ALUSrc(
-    .data1_i    (wire_idex_data2), // from Registers
+    .data1_i    (wire_fw_out2), // from MUX_FW2
     .data2_i    (wire_idex_signext), // from Sign_Extend
     .select_i   (wire_idex_ctrl_alusrc), // from Control_ALUSrc
     .data_o     (wire_mux32_alusrc)
@@ -209,7 +230,7 @@ MUX5 MUX_RegDst(
 );
 
 ALU ALU(
-    .data1_i    (wire_idex_data1),
+    .data1_i    (wire_fw_out1), // from MUX_FW1
     .data2_i    (wire_mux32_alusrc),
     .ALUCtrl_i  (wire_alu_ctrl),
     .data_o     (wire_alu_out),
@@ -222,13 +243,24 @@ ALU_Control ALU_Control(
     .ALUCtrl_o  (wire_alu_ctrl)
 );
 
+FWD FWD(
+	.IDEX_RegRs_i	(wire_idex_rsaddr),
+	.IDEX_RegRt_i	(wire_idex_rtaddr),
+	.EXMEM_RegRd_i	(wire_exmem_wr_reg),
+	.EXMEM_RegWr_i	(wire_exmem_wb[0]),
+	.MEMWB_RegRd_i	(wire_memwb_wr_reg),
+	.MEMWB_RegWr_i	(wire_memwb_ctrl_rw),
+	.Fw1_o		(wire_fw_sel1),
+	.Fw2_o		(wire_fw_sel2)
+);
+
 EXMEM EXMEM(
 	.clk_i(clk_i),
 	.WB_i(wire_idex_wb),
 	.M_i(wire_idex_m),
 	.RegAddr_i(wire_wr_reg),
 	.RegData_i(wire_alu_out),
-	.MemData_i(wire_data2),
+	.MemData_i(wire_fw_out2),
 	.MemRead_o(wire_exmem_ctrl_mr),
 	.MemWrite_o(wire_exmem_ctrl_mw),
 	.WB_o(wire_exmem_wb),
