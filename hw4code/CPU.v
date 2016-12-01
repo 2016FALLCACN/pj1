@@ -107,10 +107,10 @@ Instruction_Memory Instruction_Memory(
 
 IFID IFID(
     .clk_i		(clk_i),
-    .Stall_i		(0),
+    .Stall_i		(1'b0),
     .PC_i		(wire_pc_ret),
     .instruction_i	(wire_inst),
-    .Flush_i		(0),
+    .Flush_i		(1'b0),
     .PC_o		(wire_ifid_pc_ret),
     .instruction_o	(wire_ifid_inst)
 );
