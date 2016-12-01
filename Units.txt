@@ -8,32 +8,33 @@ ALU_Control
 
 # Need to Modify
 
-PC
+PC // TODO
 Control
+testbench // TODO
 
 # Need to Create
 
-vMUX1 - Branch
-vMUX2 - Jump
-vMUX3 - RegDst
-vMUX4 - ALUSrc
-vMUX5 - WBSrc
+MUX1 - Branch
+MUX2 - Jump
+MUX3 - RegDst
+MUX4 - ALUSrc
+MUX5 - WBSrc
 MUX6 - Data1Fwd
 MUX7 - Data2Fwd
-MUX8 - HzdDetect
-vAND - Branch 
-OR - Flush(Branch/Jump)
-vSL2a - Branch
-vSL2b - Jump
-vAdder2 - Branch
-HDU - Hzd Detect Unit
-vEQ - Branch
-FU - Forwarding Unit
+MUX8 - HzdDetect // TODO
+AND - Branch 
+OR - Flush(Branch/Jump) // TODO
+SL2a - Branch
+SL2b - Jump
+Adder2 - Branch
+HDU - Hzd Detect Unit // TODO
+EQ - Branch
+FWD - Forwarding Unit
 
 # Latches
 
-vIF_ID
-vID_EX
-vEX_MEM
-vMEM_WB
-vDM - Data Memory
+IF_ID // TODO
+ID_EX
+EX_MEM
+MEM_WB
+DM - Data Memory
