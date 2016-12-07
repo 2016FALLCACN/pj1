@@ -71,6 +71,14 @@ wire	[1:0]		wire_fw_sel2;
 wire	[31:0]		wire_fw_out1;
 wire	[31:0]		wire_fw_out2;
 
+
+wire 				wire_pc_stall;
+wire 				wire_ifid_stall;
+wire 				wire_mux8_stall;
+wire 	[7:0]		wire_mux8_data_o;
+
+
+
 AND AND_Branch(
 	.data1_i(wire_ctrl_br),
 	.data2_i(wire_zero),
@@ -95,6 +103,7 @@ PC PC(
     .clk_i      (clk_i),
     .rst_i      (rst_i),
     .start_i    (start_i),
+    .stall_i 	(wire_pc_stall),
     .pc_i       (wire_mux32_j),
     .pc_o       (wire_pc)
 );
@@ -112,7 +121,7 @@ Instruction_Memory Instruction_Memory(
 
 IFID IFID(
     .clk_i		(clk_i),
-    .Stall_i		(1'b0),
+    .Stall_i		(wire_ifid_stall),
     .PC_i		(wire_pc_ret),
     .instruction_i	(wire_inst),
     .Flush_i		(1'b0),
@@ -173,11 +182,32 @@ Sign_Extend Sign_Extend(
     .data_o     (wire_sign_ext)
 );
 
+// HDU and mux8
+
+HDU HDU(
+	.instr_i 	(wire_ifid_inst[31:0]),
+	.ID_EX_RegRt_i	(wire_idex_rtaddr),
+	.MemRead_i	(wire_idex_m[0]),
+	.PC_o 	(wire_pc_stall),
+	.IF_ID_o 	(wire_ifid_stall),
+	.mux8_o 		(wire_mux8_stall)
+);
+
+MUX8 MUX8(
+	.data1_i({wire_reg_dst, wire_alu_op[1:0], wire_alu_src, wire_reg_wr, wire_ctrl_mw, wire_ctrl_mr, wire_ctrl_mtr}),
+	.data2_i(8'b0),
+	.select_i(wire_mux8_stall),
+	.data_o(wire_mux8_data_o)
+);
+
 IDEX IDEX(
 	.clk_i(clk_i),
-	.WB_i({wire_ctrl_mtr, wire_reg_wr}),
-	.M_i({wire_ctrl_mw, wire_ctrl_mr}),
-	.EX_i({wire_reg_dst, wire_alu_op, wire_alu_src}),
+//	.WB_i({wire_ctrl_mtr, wire_reg_wr}),
+//	.M_i({wire_ctrl_mw, wire_ctrl_mr}),
+//	.EX_i({wire_reg_dst, wire_alu_op, wire_alu_src}),
+	.WB_i({wire_mux8_data_o[0], wire_mux8_data_o[3]}),
+	.M_i(wire_mux8_data_o[2:1]),
+	.EX_i(wire_mux8_data_o[7:4]),
 	.PC_i(),
 	.RegData1_i(wire_data1),
 	.RegData2_i(wire_data2),

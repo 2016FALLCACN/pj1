@@ -16,8 +16,8 @@ reg instruction_o, PC_o;
 
 always @ (posedge clk_i) begin
 	if (Stall_i) begin
-		instruction_o <= 32'd0;
-		PC_o <= 32'd0;
+		instruction_o <= instruction_o;
+		PC_o <= PC_o;
 	end
 	else if (Flush_i)
 		;

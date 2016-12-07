@@ -8,7 +8,7 @@ ALU_Control
 
 # Need to Modify
 
-PC // TODO
+PC 
 Control
 testbench // TODO
 
@@ -21,13 +21,13 @@ MUX4 - ALUSrc
 MUX5 - WBSrc
 MUX6 - Data1Fwd
 MUX7 - Data2Fwd
-MUX8 - HzdDetect // TODO
+MUX8 - HzdDetect
 AND - Branch 
 OR - Flush(Branch/Jump) // TODO
 SL2a - Branch
 SL2b - Jump
 Adder2 - Branch
-HDU - Hzd Detect Unit // TODO
+HDU - Hzd Detect Unit
 EQ - Branch
 FWD - Forwarding Unit
 
