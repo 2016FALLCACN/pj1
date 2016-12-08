@@ -106,11 +106,11 @@ always@(*) begin
     else begin // just do something
         RegDst_o = 0;
 	ALUOp_o = 2'b00;
-	ALUSrc_o = 1;
+	ALUSrc_o = 0;
 	RegWrite_o = 0;
-	MemWrite_o = 1;
+	MemWrite_o = 0;
 	MemRead_o = 0;
-	MemtoReg_o = 1;
+	MemtoReg_o = 0;
    	Branch_o = 0;
    	Jump_o = 0;
     end
