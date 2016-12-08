@@ -77,6 +77,8 @@ wire 				wire_ifid_stall;
 wire 				wire_mux8_stall;
 wire 	[7:0]		wire_mux8_data_o;
 
+wire 				wire_flush;
+
 
 
 AND AND_Branch(
@@ -84,6 +86,12 @@ AND AND_Branch(
 	.data2_i(wire_zero),
 	.and_o(wire_isbr)
 ); 
+
+OR OR_Flush(
+	.data1_i(wire_ctrl_j),
+	.data2_i(wire_isbr),
+	.or_o(wire_flush)
+);
 
 MUX32 MUX_Branch(
     .data1_i    (wire_pc_ret), // from PC + 4
@@ -124,7 +132,7 @@ IFID IFID(
     .Stall_i		(wire_ifid_stall),
     .PC_i		(wire_pc_ret),
     .instruction_i	(wire_inst),
-    .Flush_i		(1'b0),
+    .Flush_i		(wire_flush),
     .PC_o		(wire_ifid_pc_ret),
     .instruction_o	(wire_ifid_inst)
 );
