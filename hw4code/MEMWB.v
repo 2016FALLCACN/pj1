@@ -26,7 +26,7 @@ reg 	RegWrite_o,
 	RegAddr_o;
 
 always @ (posedge clk_i) begin
-	$display("[MEMWB]WB_i[0] = %b, WB_i[1] = %b\n", WB_i[0], WB_i[1]);
+//	$display("[MEMWB]WB_i[0] = %b, WB_i[1] = %b\n", WB_i[0], WB_i[1]);
  	RegWrite_o <= WB_i[0];
 	MemtoReg_o <= WB_i[1];
 	MemData_o <= MemData_i;

@@ -25,9 +25,9 @@ reg	[1:0]		Fw1_o;
 reg	[1:0]		Fw2_o;
 
 always@(*) begin
-	$display("[FWD]IDEX_RegRs_i = %b, IDEX_RegRt_i = %b\n", IDEX_RegRs_i, IDEX_RegRt_i);
-	$display("[FWD]EXMEM_RegRd_i = %b, EXMEM_RegWr_i = %b\n", EXMEM_RegRd_i, EXMEM_RegWr_i);
-	$display("[FWD]MEMWB_RegRd_i = %b, MEMWB_RegWr_i = %b\n", MEMWB_RegRd_i, MEMWB_RegWr_i);
+//	$display("[FWD]IDEX_RegRs_i = %b, IDEX_RegRt_i = %b\n", IDEX_RegRs_i, IDEX_RegRt_i);
+//	$display("[FWD]EXMEM_RegRd_i = %b, EXMEM_RegWr_i = %b\n", EXMEM_RegRd_i, EXMEM_RegWr_i);
+//	$display("[FWD]MEMWB_RegRd_i = %b, MEMWB_RegWr_i = %b\n", MEMWB_RegRd_i, MEMWB_RegWr_i);
 	
 	if (EXMEM_RegWr_i && EXMEM_RegRd_i && IDEX_RegRs_i == EXMEM_RegRd_i) // from ALU, to Rs
 		Fw1_o = 2'b10;

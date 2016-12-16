@@ -27,8 +27,8 @@ reg	MemRead_o, MemWrite_o,
 	RegData_o, MemData_o;
 
 always @ (posedge clk_i) begin
-	$display("[EXMEM]M_i[0] = %b, M_i[1] = %b\n", M_i[0], M_i[1]);
-	$display("[EXMEM]WB_i[0] = %b, WB_i[1] = %b\n", WB_i[0], WB_i[1]);
+//	$display("[EXMEM]M_i[0] = %b, M_i[1] = %b\n", M_i[0], M_i[1]);
+//	$display("[EXMEM]WB_i[0] = %b, WB_i[1] = %b\n", WB_i[0], WB_i[1]);
 	MemRead_o <= M_i[0];
 	MemWrite_o <= M_i[1];
 	WB_o <= WB_i;
