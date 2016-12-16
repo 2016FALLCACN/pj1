@@ -164,7 +164,7 @@ Sll Sll_Branch(
 
 Adder Add_Branch(
     .data1_i   (wire_sll_br),
-    .data2_i   (wire_pc_ret),
+    .data2_i   (wire_ifid_pc_ret),
     .data_o     (wire_add_br)
 );
 
